@@ -4,6 +4,7 @@ import { APP } from '../../utils/constant';
 export const IS_FETCHING_QUOTE = 'IS_FETCHING_QUOTE';
 export const FETCH_QUOTE = 'FETCH_QUOTE';
 export const FETCHED_QUOTE = 'FETCHED_QUOTE';
+
 export const setIsFetchingQuote = (payload) => (dispatch) => {
   dispatch({
     type: IS_FETCHING_QUOTE,
