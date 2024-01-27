@@ -1,0 +1,4 @@
+export const APP = {
+  API_MAIN_URL: process.env.REACT_APP_API_MAIN_URL,
+  SOCIAL_PROVIDERS: process.env.REACT_APP_API_SOCIAL_PROVIDERS,
+};
