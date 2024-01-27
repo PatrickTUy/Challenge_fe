@@ -85,6 +85,7 @@ const Login = () => {
       .then((res) => {
         reset();
         localStorage.setItem('userToken', JSON.stringify(res.data.accessToken));
+        localStorage.setItem('first_name', res.data.first_name);
         setLoading(false);
         navigate('/home');
       })
