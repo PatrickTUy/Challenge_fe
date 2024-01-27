@@ -4,9 +4,10 @@ import Input from '../components/Input';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import Button from '../components/Button';
+import { BsFacebook } from 'react-icons/bs';
+import { BsTwitterX } from 'react-icons/bs';
+import { AiFillGoogleCircle } from 'react-icons/ai';
 
-import * as Yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { ToastComponent, ToasterComponent } from '../components/Toast';
 
 import { APP } from '../utils/constant';
@@ -14,17 +15,6 @@ import { APP } from '../utils/constant';
 const Register = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [redirectUrl, setRedirectUrl] = useState(null);
-  const [verify, setVerify] = useState(false);
-  const [code, setCode] = useState(0);
-  const [inputError, setInputError] = useState({});
-  const userRole = localStorage.getItem('role');
-  const params = new URLSearchParams(window.location.search);
-  const role = params.get('role');
-  const token = params.get('auth');
-  const [socialAuthFetching, setSocialAuthFetching] = useState(false);
-  const [socialAuthProviders, setSocialAuthProviders] = useState([]);
-  const [verifyLoading, setVerifyLoading] = useState(false);
 
   const clearForm = () => {
     document.getElementById('myForm').reset();
@@ -37,7 +27,6 @@ const Register = () => {
     });
   };
 
-  // redirect url
   const [data, setData] = useState({
     first_name: '',
     last_name: '',
@@ -51,27 +40,6 @@ const Register = () => {
     formState: { errors },
     reset,
   } = useForm();
-
-  useEffect(() => {
-    console.log(inputError, 'inputError');
-    // if (Object.keys(inputError).length > 0) {
-    //   notify('error', inputError.message);
-    // }
-  }, [inputError]);
-
-  useEffect(() => {
-    if (redirectUrl) {
-      window.location = redirectUrl;
-    }
-    // url params
-    token
-      ? localStorage.setItem('auth', token)
-      : localStorage.setItem('user', null);
-
-    role
-      ? localStorage.setItem('role', role)
-      : localStorage.setItem('user', null);
-  }, [redirectUrl, userRole, handleSubmit]);
 
   const onSubmit = async () => {
     try {
@@ -97,88 +65,14 @@ const Register = () => {
     }
   };
 
-  // function to register with google
-  const handleGoogleSignUp = async () => {
-    try {
-      const response = await axios
-        .get(APP.API_MAIN_URL + '/auth/google')
-        .then((res) => {
-          if (res.status === 200) {
-            setRedirectUrl(res.data.redirect_url);
-            console.log(res);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // function to register with twitter
-  const handleFacebookSignUp = async () => {
-    try {
-      const response = await axios
-        .get(APP.API_MAIN_URL + '/auth/facebook')
-        .then((res) => {
-          console.log(res);
-          if (res.status === 200) {
-            setRedirectUrl(res.data.redirect_url);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // function to register with Twitter
-  const handleTwitterSignUp = async () => {
-    try {
-      const response = await axios
-        .get(APP.API_MAIN_URL + '/auth/twitter')
-        .then((res) => {
-          if (res.status === 200) {
-            setRedirectUrl(res.data.redirect_url);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    setSocialAuthFetching(true);
-    axios
-      .get(APP.SOCIAL_PROVIDERS + '/utils/auth/providers')
-      .then((res) => {
-        setSocialAuthFetching(false);
-        setSocialAuthProviders(res.data.data);
-        console.log(res);
-      })
-      .catch((err) => {
-        setSocialAuthFetching(false);
-        console.log(err);
-        notify('error', 'Fetching social authentication failed');
-      });
-  }, []);
-
-  const extractCountryCode = (phone) => {
-    // remove non digits
-    const code = phone.replace(/\D/g, '');
-    return code;
+  const handleSocialLogin = () => {
+    console.log('Social login');
   };
 
   return (
     <div className="flex flex-col justify-center items-center font-nunito bg-secondary h-full w-full rounded-lg ">
       <div className="flex flex-col  w-full md:w-[500px] min-h-3/4 rounded-lg p-4  shadow-2xl lg:m-auto">
-        <div className={`${verify ? 'hidden' : 'flex'} flex-col`}>
+        <div className="flex flex-col">
           <div className="flex flex-col">
             <div className="flex flex-col">
               <p className="text-xl leading-[24px] text-footerColor font-bold font-nunito flex justify-center">
@@ -294,33 +188,33 @@ const Register = () => {
               </h2>
               <div className="w-1/4 md:w-1/3 h-[1px] bg-light"></div>
             </div>
-            <div className="flex flex-row justify-between w-full items-center">
-              {socialAuthFetching ? (
-                <>
-                  <div className="w-[30px] h-[30px] animate-pulse bg-gray rounded-full "></div>
-                  <div className="w-[30px] h-[30px] animate-pulse bg-gray rounded-full "></div>
-                  <div className="w-[30px] h-[30px] animate-pulse bg-gray rounded-full "></div>
-                </>
-              ) : (
-                <>
-                  {socialAuthProviders.map((provider) => {
-                    return provider.status === 'active' ? (
-                      <div
-                        className="w-[30px] h-[30px] rounded-full cursor-pointer"
-                        onClick={() =>
-                          (window.location.href = provider.register_url)
-                        }
-                      >
-                        <img
-                          src={provider.logo}
-                          alt=""
-                          className="object-contain"
-                        />
-                      </div>
-                    ) : null;
-                  })}
-                </>
-              )}
+            <div className="flex flex-row justify-between w-full">
+              <div
+                className="w-[30px] h-[30px] rounded-full cursor-pointer"
+                onClick={() => {
+                  handleSocialLogin();
+                }}
+              >
+                <AiFillGoogleCircle size={30} className="object-contain" />
+              </div>
+
+              <div
+                className="w-[30px] h-[30px] rounded-full cursor-pointer"
+                onClick={() => {
+                  handleSocialLogin();
+                }}
+              >
+                <BsFacebook size={27} className="object-contain" />
+              </div>
+
+              <div
+                className="w-[30px] h-[30px] rounded-full cursor-pointer"
+                onClick={() => {
+                  handleSocialLogin();
+                }}
+              >
+                <BsTwitterX size={25} className="object-contain" />
+              </div>
             </div>
           </form>
         </div>

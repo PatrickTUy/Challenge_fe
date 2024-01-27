@@ -7,6 +7,9 @@ import Input from '../components/Input';
 import StyledInput from '../components/StyledInput';
 import Button from '../components/Button';
 import axios from 'axios';
+import { BsFacebook } from 'react-icons/bs';
+import { BsTwitterX } from 'react-icons/bs';
+import { AiFillGoogleCircle } from 'react-icons/ai';
 import { ToastComponent, ToasterComponent } from '../components/Toast';
 
 import { APP } from '../utils/constant.js';
@@ -15,8 +18,6 @@ const Login = () => {
   const navigate = useNavigate();
   const [loader, setLoader] = useState(false);
   const [passwordShown, setPasswordShown] = useState(false);
-  const [socialAuthFetching, setSocialAuthFetching] = useState(false);
-  const [socialAuthProviders, setSocialAuthProviders] = useState([]);
 
   const {
     register,
@@ -29,7 +30,6 @@ const Login = () => {
   };
 
   const handleSocialLogin = () => {
-    //Social login handler
     console.log('Social login');
   };
 
@@ -58,7 +58,7 @@ const Login = () => {
       .then((res) => {
         console.log(res, 'this is the response');
         reset();
-        localStorage.setItem('userToken', res.data.acessToken);
+        localStorage.setItem('userToken', res.data.accessToken);
         localStorage.setItem('first_name', res.data.first_name);
         navigate('/home');
         setLoading(false);
@@ -73,21 +73,6 @@ const Login = () => {
       });
   };
 
-  useEffect(() => {
-    setSocialAuthFetching(true);
-    axios
-      .get(APP.SOCIAL_PROVIDERS + '/utils/auth/providers')
-      .then((res) => {
-        setSocialAuthFetching(false);
-        setSocialAuthProviders(res.data.data);
-      })
-      .catch((err) => {
-        setSocialAuthFetching(false);
-        console.log(err);
-        notify('error', 'Fetching social authentication failed');
-      });
-  }, []);
-
   const onKeyEnter = async () => {
     setLoading(true);
     await axios
@@ -101,6 +86,7 @@ const Login = () => {
         reset();
         localStorage.setItem('userToken', JSON.stringify(res.data.accessToken));
         setLoading(false);
+        navigate('/home');
       })
       .catch((err) => {
         console.log(err, 'error');
@@ -233,33 +219,32 @@ const Login = () => {
             </div>
 
             <div className="flex flex-row justify-between w-full">
-              {socialAuthFetching ? (
-                <>
-                  <div className="w-[30px] h-[30px] animate-pulse bg-gray rounded-full "></div>
-                  <div className="w-[30px] h-[30px] animate-pulse bg-gray rounded-full "></div>
-                  <div className="w-[30px] h-[30px] animate-pulse bg-gray rounded-full "></div>
-                </>
-              ) : (
-                <>
-                  {socialAuthProviders.map((provider, i) => {
-                    return provider.status === 'active' ? (
-                      <div
-                        key={i}
-                        className="w-[30px] h-[30px] rounded-full cursor-pointer"
-                        onClick={() => {
-                          handleSocialLogin();
-                        }}
-                      >
-                        <img
-                          src={provider.logo}
-                          alt=""
-                          className="object-contain"
-                        />
-                      </div>
-                    ) : null;
-                  })}
-                </>
-              )}
+              <div
+                className="w-[30px] h-[30px] rounded-full cursor-pointer"
+                onClick={() => {
+                  handleSocialLogin();
+                }}
+              >
+                <AiFillGoogleCircle size={30} className="object-contain" />
+              </div>
+
+              <div
+                className="w-[30px] h-[30px] rounded-full cursor-pointer"
+                onClick={() => {
+                  handleSocialLogin();
+                }}
+              >
+                <BsFacebook size={27} className="object-contain" />
+              </div>
+
+              <div
+                className="w-[30px] h-[30px] rounded-full cursor-pointer"
+                onClick={() => {
+                  handleSocialLogin();
+                }}
+              >
+                <BsTwitterX size={25} className="object-contain" />
+              </div>
             </div>
           </div>
         </div>
